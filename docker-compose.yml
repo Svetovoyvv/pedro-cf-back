@@ -16,7 +16,7 @@ services:
     build: "."
     container_name: 'pedro-back'
     ports:
-      - "0.0.0.0:80:80"
+      - "0.0.0.0:8000:80"
     environment:
       - SECRET_KEY
       - DATABASE_HOST
