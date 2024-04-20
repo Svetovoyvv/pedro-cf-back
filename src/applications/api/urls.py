@@ -4,4 +4,5 @@ urlpatterns = [
     path('auth/', include('applications.gauth.api.urls')),
     path('chats/', include('applications.chats.api.urls')),
     path('members/', include('applications.members.api.urls')),
+    path('recommendations/', include('applications.matches.api.urls',)),
 ]

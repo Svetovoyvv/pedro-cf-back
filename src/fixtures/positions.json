@@ -1,0 +1,16 @@
+[
+{
+    "model": "members.workposition",
+    "pk": 1,
+    "fields": {
+        "name": "Младший разработчик"
+    }
+},
+{
+    "model": "members.workposition",
+    "pk": 2,
+    "fields": {
+        "name": "Старший разработчик"
+    }
+}
+]

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'applications.chats',
     'applications.common',
     'applications.gauth',
+    'applications.matches',
 
     'rest_framework',
     'drf_spectacular',

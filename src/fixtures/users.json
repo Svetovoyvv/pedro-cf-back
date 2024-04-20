@@ -33,16 +33,15 @@
         "username": "test_user_1",
         "first_name": "Test",
         "last_name": "User1",
-        "email": "",
+        "email": "228vilkov@gmail.com",
         "is_staff": false,
         "is_active": true,
         "date_joined": "2024-04-20T05:38:42.947Z",
         "birth_date": null,
         "position": null,
         "about": null,
-        "time_preference": null,
         "avatar": "",
-        "groups": [],
+        "groups": [1],
         "user_permissions": [],
         "tags": []
     }

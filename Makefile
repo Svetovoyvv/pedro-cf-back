@@ -5,6 +5,7 @@ dumpdata:
 loaddata:
 	python src/manage.py loaddata src/fixtures/groups.json
 	python src/manage.py loaddata src/fixtures/users.json
+	python src/manage.py loaddata src/fixtures/positions.json
 
 rebuild_migrations:
 	echo **/migrations/*.py | sed 's/ /\n/g' | grep -v '__' | xargs rm -f

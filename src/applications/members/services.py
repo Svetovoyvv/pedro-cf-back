@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from applications.members.models import WorkPosition, User, TimePreference, Tag
+from applications.members.models import WorkPosition, User, Tag
 
 
 def create_user(username: str,
@@ -26,7 +26,7 @@ def update_user(user: User,
                 birth_date: datetime | None = None,
                 avatar: Any | None = None,
                 position: WorkPosition | None = None,
-                time_preference: TimePreference | None = None,
+                time_preference: str | None = None,
                 tags: list[int] | None = None) -> User:
 
     if first_name is not None:
@@ -52,3 +52,8 @@ def update_user(user: User,
 
     user.save()
     return user
+
+
+def create_tag(name: str):
+    tag, _ = Tag.objects.get_or_create(name=name)
+    return tag

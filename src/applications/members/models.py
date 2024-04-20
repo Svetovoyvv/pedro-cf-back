@@ -15,10 +15,6 @@ class WorkPosition(models.Model):
     name = models.CharField(max_length=255)
 
 
-class TimePreference(models.Model):
-    name = models.CharField(max_length=255)
-
-
 def upload_avatar(instance: 'User', filename: str) -> pathlib.Path:
     return upload_to('avatar', instance, filename)
 
@@ -41,9 +37,8 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
-    time_preference = models.ForeignKey(
-        TimePreference,
-        on_delete=models.SET_NULL,
+    time_preference = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
     )

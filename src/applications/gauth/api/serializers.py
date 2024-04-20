@@ -5,7 +5,7 @@ from dj_rest_auth.serializers import LoginSerializer
 from rest_framework import serializers
 
 from applications.members.api.serializers import RetrieveUserSerializer
-from applications.members.models import User, WorkPosition, TimePreference, Tag
+from applications.members.models import User, WorkPosition
 
 
 class CustomLoginSerializer(LoginSerializer):
@@ -32,9 +32,7 @@ class UpdateUserSerializer(serializers.Serializer):
     position = serializers.PrimaryKeyRelatedField(
         queryset=WorkPosition.objects.all(),
     )
-    time_preference = serializers.PrimaryKeyRelatedField(
-        queryset=TimePreference.objects.all(),
-    )
+    time_preference = serializers.CharField()
     about = serializers.CharField()
     tags = serializers.ListSerializer(
         child=serializers.IntegerField(),

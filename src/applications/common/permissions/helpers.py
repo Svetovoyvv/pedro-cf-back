@@ -5,7 +5,7 @@ from applications.members.models import User
 
 
 def is_user_has_group(user: User, group: GroupNames) -> bool:
-    return user.groups.filter(name=group.name).exists()
+    return user.groups.filter(name=group.value).exists()
 
 
 def is_admin(user: User) -> bool:
