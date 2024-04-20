@@ -26,3 +26,43 @@ class UserRecommendation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
 
+
+class MeetingState(models.IntegerChoices):
+    PENDING = 0
+    APPROVED = 1
+    REJECTED = 2
+
+
+class Meeting(models.Model):
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+    is_online = models.BooleanField()
+    state = models.IntegerField(
+        choices=MeetingState.choices,
+        default=MeetingState.PENDING,
+    )
+
+
+class MeetingMemberState(models.IntegerChoices):
+    PENDING = 0
+    APPROVED = 1
+    CANCELED = 2
+
+
+class MeetingMember(models.Model):
+    user = models.ForeignKey(
+        'members.User',
+        on_delete=models.CASCADE,
+    )
+    meeting = models.ForeignKey(
+        Meeting,
+        on_delete=models.CASCADE,
+    )
+    comment = models.TextField()
+    state = models.IntegerField(
+        choices=MeetingMemberState.choices,
+        default=MeetingMemberState.PENDING,
+    )
+
+
+

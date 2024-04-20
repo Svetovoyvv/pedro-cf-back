@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from applications.chats.models import Chat
 from applications.chats.services import create_chat, create_message
 from applications.matches.models import RecommendationState
 from applications.matches.services import random_spread_recommendations
@@ -35,10 +36,24 @@ class MatchTestCase(AppBaseTestClass, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         rec_pk = response.data['results'][0]['id']
         response = self.client.patch(
-            f'/api/recommendations/match/{rec_pk}',
+            f'/api/recommendations/match/{rec_pk}/',
             {'state': RecommendationState.LIKE},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['is_bump'], False)
 
         self.client.force_authenticate(user=self.test_user_1)
+        response = self.client.get('/api/recommendations/match/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        rec_pk = response.data['results'][0]['id']
+        response = self.client.patch(
+            f'/api/recommendations/match/{rec_pk}/',
+            {'state': RecommendationState.LIKE},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['is_bump'], True)
 
+        self.assertEqual(
+            set(Chat.objects.first().participants.values_list('user__id', flat=True)),
+            {self.admin.id, self.test_user_1.id},
+        )

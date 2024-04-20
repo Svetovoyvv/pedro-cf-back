@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from applications.common.exceptions import BaseServiceException
 from applications.common.mixins import CustomUpdateModelMixin
 from applications.matches.api.serializers import UserRecommendationSerializer, UpdateUserRecommendationsSerializer
-from applications.matches.models import UserRecommendation
+from applications.matches.models import UserRecommendation, RecommendationState
 from applications.matches.services import update_recommendation
 
 MATCH_TAG = 'Рекомендации пользователей'
@@ -24,6 +24,7 @@ class MatchViewSet(mixins.ListModelMixin,
         self.queryset = self.queryset.filter(
             subject=self.request.user,
             is_deleted=False,
+            state=RecommendationState.PENDING,
         )
         return super().get_queryset()
 

@@ -11,6 +11,7 @@ class UserRelatedRecommendationSerializer(serializers.Serializer):
 
 
 class UserRecommendationSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     object = UserRelatedRecommendationSerializer(read_only=True)
     state = serializers.ChoiceField(choices=RecommendationState.choices)
     is_bump = serializers.SerializerMethodField()
