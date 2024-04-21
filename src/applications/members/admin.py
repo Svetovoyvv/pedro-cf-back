@@ -17,6 +17,7 @@ class UserAdmin(BaseUserAdmin):
         }),
         ('Personal info', {
             'fields': (
+                'avatar',
                 'first_name',
                 'last_name',
                 'email',

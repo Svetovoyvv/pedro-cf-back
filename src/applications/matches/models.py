@@ -41,13 +41,11 @@ class Meeting(models.Model):
         'members.User',
         on_delete=models.CASCADE,
     )
-    state = models.IntegerField(
-        choices=MeetingState.choices,
-        default=MeetingState.PENDING,
-    )
     chat = models.OneToOneField(
         'chats.Chat',
         on_delete=models.CASCADE,
+        related_name='meeting',
+        null=False,
     )
 
 class MeetingMemberState(models.IntegerChoices):
@@ -64,6 +62,7 @@ class MeetingMember(models.Model):
     meeting = models.ForeignKey(
         Meeting,
         on_delete=models.CASCADE,
+        related_name='members',
     )
     comment = models.TextField()
     state = models.IntegerField(

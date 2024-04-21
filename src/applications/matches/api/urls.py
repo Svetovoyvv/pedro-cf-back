@@ -4,6 +4,9 @@ from applications.matches.api import views
 
 router = SimpleRouter()
 
+
 router.register(r'match', views.MatchViewSet)
+router.register('meeting', views.MeetingViewSet)
+
 
 urlpatterns = router.urls

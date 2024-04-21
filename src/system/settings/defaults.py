@@ -105,13 +105,19 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = 'avatars/'
+MEDIA_ROOT = BASE_DIR.parent.parent / 'media'
 
 AUTH_USER_MODEL = 'members.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "X-AUTHORIZATION".lower(),
+)
 
 LOGGING = {
     'version': 1,
@@ -175,6 +181,13 @@ SIMPLE_JWT = {
 
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
+
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_X_AUTHORIZATION",
 }
 
 FIXTURE_DIRS = ['src/fixtures']
+STATICFILES_DIRS = [
+    MEDIA_ROOT,
+    MEDIA_ROOT / 'avatars'
+]

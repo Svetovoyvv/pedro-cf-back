@@ -8,12 +8,14 @@ from django.utils import timezone
 from applications.chats.models import Chat
 from applications.chats.services import create_chat
 from applications.common.exceptions import BaseServiceException
-from applications.matches.models import UserRecommendation, RecommendationState, Meeting, MeetingMember
+from applications.matches.models import UserRecommendation, RecommendationState, Meeting, MeetingMember, \
+    MeetingMemberState
 from applications.members.models import User
 
 
 def get_recommendations_delta():
     return timezone.now() - timedelta(weeks=2)
+
 
 def random_spread_recommendations():
     UserRecommendation.objects.all().update(
@@ -94,8 +96,21 @@ def create_meeting(actor: User,
                     participant=meeting,
                     user=participant.user,
                 )
-        return meeting.refresh_from_db()
+        return Meeting.objects.get(id=meeting.id)
     except IntegrityError as e:
         raise BaseServiceException(
             'Ошибка при создании встречи'
         ) from e
+
+
+def update_meeting_state(meeting: Meeting,
+                         actor: User,
+                         state: MeetingMemberState,
+                         comment: str) -> Meeting:
+    member = meeting.members.filter(user=actor).first()
+    if not member:
+        raise BaseServiceException('Не найдена встреча')
+    member.state = state
+    member.comment = comment
+    member.save()
+    return Meeting.objects.get(id=meeting.id)

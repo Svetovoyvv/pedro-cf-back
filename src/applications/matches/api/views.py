@@ -1,15 +1,17 @@
 from django.db.models import Exists, OuterRef
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, viewsets, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from applications.common.exceptions import BaseServiceException
 from applications.common.mixins import CustomUpdateModelMixin
 from applications.matches.api.serializers import UserRecommendationSerializer, UpdateUserRecommendationsSerializer, \
-    MeetingSerializer, CreateMeetingSerializer
+    MeetingSerializer, CreateMeetingSerializer, UpdateMeetingMemberSerializer
 from applications.matches.models import UserRecommendation, RecommendationState, Meeting, MeetingMember
-from applications.matches.services import update_recommendation, create_meeting
+from applications.matches.services import update_recommendation, create_meeting, update_meeting_state
 
 MATCH_TAG = 'Рекомендации пользователей'
 MEETING_TAG = 'Встречи'
@@ -118,4 +120,28 @@ class MeetingViewSet(mixins.ListModelMixin,
             data=self.get_serializer(meeting).data,
             status=status.HTTP_200_OK,
         )
+
+    @extend_schema(
+        request=UpdateMeetingMemberSerializer,
+        responses={status.HTTP_200_OK: MeetingSerializer},
+        tags=[MEETING_TAG],
+    )
+    @action(methods=['PATCH'], url_path='member', detail=True, )
+    def update_member(self, request: Request, *args, **kwargs):
+        serializer = UpdateMeetingMemberSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            meeting = update_meeting_state(
+                self.get_object(),
+                request.user,
+                **serializer.validated_data,
+            )
+        except BaseServiceException as e:
+            return e.response()
+        return Response(
+            status=status.HTTP_200_OK,
+            data=self.get_serializer(meeting).data,
+        )
+
 
