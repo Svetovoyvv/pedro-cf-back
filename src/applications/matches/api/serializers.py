@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from applications.chats.models import Chat
 from applications.matches.models import RecommendationState, UserRecommendation
 from applications.members.api.serializers import TagSerializer, RetrieveUserSerializer
 
@@ -28,7 +29,18 @@ class UserRecommendationSerializer(serializers.Serializer):
         return None
 
 
-
-
 class UpdateUserRecommendationsSerializer(serializers.Serializer):
     state = serializers.ChoiceField(choices=RecommendationState.choices)
+
+
+class MeetingSerializer(serializers.Serializer):
+    ...
+
+
+class CreateMeetingSerializer(serializers.Serializer):
+    start_datetime = serializers.DateTimeField()
+    end_datetime = serializers.DateTimeField()
+    is_online = serializers.BooleanField()
+    chat = serializers.PrimaryKeyRelatedField(
+        queryset=Chat.objects.all(),
+    )

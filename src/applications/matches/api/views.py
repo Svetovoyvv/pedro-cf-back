@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, viewsets, status
 from rest_framework.permissions import IsAuthenticated
@@ -5,11 +6,13 @@ from rest_framework.response import Response
 
 from applications.common.exceptions import BaseServiceException
 from applications.common.mixins import CustomUpdateModelMixin
-from applications.matches.api.serializers import UserRecommendationSerializer, UpdateUserRecommendationsSerializer
-from applications.matches.models import UserRecommendation, RecommendationState
-from applications.matches.services import update_recommendation
+from applications.matches.api.serializers import UserRecommendationSerializer, UpdateUserRecommendationsSerializer, \
+    MeetingSerializer, CreateMeetingSerializer
+from applications.matches.models import UserRecommendation, RecommendationState, Meeting, MeetingMember
+from applications.matches.services import update_recommendation, create_meeting
 
 MATCH_TAG = 'Рекомендации пользователей'
+MEETING_TAG = 'Встречи'
 
 class MatchViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
@@ -64,3 +67,55 @@ class MatchViewSet(mixins.ListModelMixin,
             status=status.HTTP_200_OK,
             data=self.get_serializer(recommendation).data,
         )
+
+
+class MeetingViewSet(mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.CreateModelMixin,
+                     viewsets.GenericViewSet):
+    queryset = Meeting.objects.all()
+    serializer_class = MeetingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        self.queryset = self.queryset.filter(
+            Exists(
+                MeetingMember.objects.filter(
+                    meeting=OuterRef('id'),
+                    user=self.request.user,
+                )
+            )
+        )
+
+    @extend_schema(
+        responses={status.HTTP_200_OK: MeetingSerializer(many=True)},
+        tags=[MEETING_TAG]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        responses={status.HTTP_200_OK: MeetingSerializer},
+        tags=[MEETING_TAG],
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        request=CreateMeetingSerializer,
+        responses={status.HTTP_201_CREATED: MeetingSerializer},
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = CreateMeetingSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            meeting = create_meeting(request.user, **serializer.validated_data)
+        except BaseServiceException as e:
+            return e.response()
+
+        return Response(
+            data=self.get_serializer(meeting).data,
+            status=status.HTTP_200_OK,
+        )
+

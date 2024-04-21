@@ -37,11 +37,18 @@ class Meeting(models.Model):
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
     is_online = models.BooleanField()
+    author = models.ForeignKey(
+        'members.User',
+        on_delete=models.CASCADE,
+    )
     state = models.IntegerField(
         choices=MeetingState.choices,
         default=MeetingState.PENDING,
     )
-
+    chat = models.OneToOneField(
+        'chats.Chat',
+        on_delete=models.CASCADE,
+    )
 
 class MeetingMemberState(models.IntegerChoices):
     PENDING = 0

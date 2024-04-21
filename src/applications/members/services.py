@@ -32,6 +32,7 @@ def update_user(user: User,
                 first_name: str | None = None,
                 last_name: str | None = None,
                 birth_date: datetime | None = None,
+                about: str | None = None,
                 avatar: Any | None = None,
                 position: WorkPosition | None = None,
                 time_preference: str | None = None,
@@ -55,9 +56,12 @@ def update_user(user: User,
     if time_preference is not None:
         user.time_preference = time_preference
 
+    if about is not None:
+        user.about = about
+
     if tags is not None:
         tags = [int(tag) for tag in tags.split(',')]
-        user.tags.set(list(Tag.objects.filter(tag__in=tags)))
+        user.tags.set(list(Tag.objects.filter(id__in=tags)))
 
     user.save()
     return user

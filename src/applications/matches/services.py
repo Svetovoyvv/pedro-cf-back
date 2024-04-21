@@ -1,13 +1,14 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 import random
 
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
+from applications.chats.models import Chat
 from applications.chats.services import create_chat
 from applications.common.exceptions import BaseServiceException
-from applications.matches.models import UserRecommendation, RecommendationState
+from applications.matches.models import UserRecommendation, RecommendationState, Meeting, MeetingMember
 from applications.members.models import User
 
 
@@ -74,3 +75,27 @@ def update_recommendation(actor: User,
     recommendation.state = state
     recommendation.save()
     return recommendation
+
+
+def create_meeting(actor: User,
+                   chat: Chat,
+                   start_datetime: datetime,
+                   end_datetime: datetime) -> Meeting:
+    try:
+        with transaction.atomic():
+            meeting = Meeting.objects.create(
+                author=actor,
+                start_datetime=start_datetime,
+                end_datetime=end_datetime,
+                chat=chat,
+            )
+            for participant in chat.participants.all():
+                MeetingMember.objects.create(
+                    participant=meeting,
+                    user=participant.user,
+                )
+        return meeting.refresh_from_db()
+    except IntegrityError as e:
+        raise BaseServiceException(
+            'Ошибка при создании встречи'
+        ) from e
