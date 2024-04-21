@@ -20,7 +20,7 @@ class RetrieveChatSerializer(serializers.Serializer):
 
     @extend_schema_field(RetrieveUserSerializer(many=True))
     def get_participants(self, instance: Chat):
-        return RetrieveUserSerializer(instance.participants.all(), many=True)
+        return RetrieveUserSerializer(instance.participants.all(), many=True).data
 
 
 class RetrieveMessageSerializer(RetrieveMessageInChatSerializer):
