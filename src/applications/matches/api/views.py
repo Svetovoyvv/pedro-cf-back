@@ -73,6 +73,7 @@ class MatchViewSet(mixins.ListModelMixin,
 
     @extend_schema(
         responses={status.HTTP_200_OK: None},
+        request=None,
         tags=[MATCH_TAG],
     )
     @action(detail=False, methods=['POST'], url_path='random')
