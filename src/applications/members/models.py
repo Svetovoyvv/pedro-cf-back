@@ -1,5 +1,6 @@
 import pathlib
 
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -51,7 +52,7 @@ class User(AbstractUser):
     @property
     def ages(self):
         if self.birth_date is not None:
-            return (timezone.now() - self.birth_date).year
+            return relativedelta(timezone.now().date() - self.birth_date).years
         return None
 
     def get_full_name(self):

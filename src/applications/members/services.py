@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Any
 
+from django.db import IntegrityError
+
+from applications.common.exceptions import BaseServiceException
 from applications.members.models import WorkPosition, User, Tag
 
 
@@ -10,14 +13,19 @@ def create_user(username: str,
                 email: str,
                 birth_date: datetime,
                 position: WorkPosition):
-    return User.objects.create(
-        username=username,
-        first_name=first_name,
-        last_name=last_name,
-        email=email,
-        birth_date=birth_date,
-        position=position,
-    )
+    try:
+        return User.objects.create(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            birth_date=birth_date,
+            position=position,
+        )
+    except IntegrityError as e:
+        raise BaseServiceException(
+            'Ошибка создания пользователя'
+        ) from e
 
 
 def update_user(user: User,
@@ -27,7 +35,7 @@ def update_user(user: User,
                 avatar: Any | None = None,
                 position: WorkPosition | None = None,
                 time_preference: str | None = None,
-                tags: list[int] | None = None) -> User:
+                tags: str | None = None) -> User:
 
     if first_name is not None:
         user.first_name = first_name
@@ -48,6 +56,7 @@ def update_user(user: User,
         user.time_preference = time_preference
 
     if tags is not None:
+        tags = [int(tag) for tag in tags.split(',')]
         user.tags.set(list(Tag.objects.filter(tag__in=tags)))
 
     user.save()

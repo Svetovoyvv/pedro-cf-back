@@ -32,6 +32,7 @@ class RetrieveUserSerializer(serializers.Serializer):
     birth_date = serializers.DateField()
     ages = serializers.IntegerField(read_only=True)
     time_preference = serializers.CharField()
+    about = serializers.CharField()
 
     groups = GroupSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)

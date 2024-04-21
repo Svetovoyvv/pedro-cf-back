@@ -25,16 +25,14 @@ class TokenSerializer(serializers.Serializer):
 
 
 class UpdateUserSerializer(serializers.Serializer):
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
-    birth_date = serializers.DateField()
-    avatar = serializers.ImageField()
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    birth_date = serializers.DateField(required=False)
+    avatar = serializers.ImageField(required=False)
     position = serializers.PrimaryKeyRelatedField(
         queryset=WorkPosition.objects.all(),
+        required=False,
     )
-    time_preference = serializers.CharField()
-    about = serializers.CharField()
-    tags = serializers.ListSerializer(
-        child=serializers.IntegerField(),
-    )
-
+    time_preference = serializers.CharField(required=False)
+    about = serializers.CharField(required=False)
+    tags = serializers.CharField(required=False)
