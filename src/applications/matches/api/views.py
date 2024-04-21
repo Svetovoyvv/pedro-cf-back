@@ -11,7 +11,8 @@ from applications.common.mixins import CustomUpdateModelMixin
 from applications.matches.api.serializers import UserRecommendationSerializer, UpdateUserRecommendationsSerializer, \
     MeetingSerializer, CreateMeetingSerializer, UpdateMeetingMemberSerializer
 from applications.matches.models import UserRecommendation, RecommendationState, Meeting, MeetingMember
-from applications.matches.services import update_recommendation, create_meeting, update_meeting_state
+from applications.matches.services import update_recommendation, create_meeting, update_meeting_state, \
+    random_spread_recommendations
 
 MATCH_TAG = 'Рекомендации пользователей'
 MEETING_TAG = 'Встречи'
@@ -68,6 +69,17 @@ class MatchViewSet(mixins.ListModelMixin,
         return Response(
             status=status.HTTP_200_OK,
             data=self.get_serializer(recommendation).data,
+        )
+
+    @extend_schema(
+        responses={status.HTTP_200_OK: None},
+        tags=[MATCH_TAG],
+    )
+    @action(detail=False, methods=['POST'], url_path='random')
+    def random(self, request):
+        random_spread_recommendations()
+        return Response(
+            status=status.HTTP_200_OK,
         )
 
 
