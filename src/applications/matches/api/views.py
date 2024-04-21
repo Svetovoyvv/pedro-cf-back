@@ -77,7 +77,7 @@ class MatchViewSet(mixins.ListModelMixin,
         tags=[MATCH_TAG],
     )
     @action(detail=False, methods=['POST'], url_path='random')
-    def random(self, request):
+    def random(self, request, *args, **kwargs):
         random_spread_recommendations()
         return Response(
             status=status.HTTP_200_OK,
