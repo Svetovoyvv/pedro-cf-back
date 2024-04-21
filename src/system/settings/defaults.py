@@ -104,9 +104,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-STATIC_URL = 'avatars/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR.parent.parent / 'static'
 MEDIA_ROOT = BASE_DIR.parent.parent / 'media'
+MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'members.User'
 
@@ -187,7 +188,3 @@ SIMPLE_JWT = {
 }
 
 FIXTURE_DIRS = ['src/fixtures']
-STATICFILES_DIRS = [
-    MEDIA_ROOT,
-    MEDIA_ROOT / 'avatars'
-]
