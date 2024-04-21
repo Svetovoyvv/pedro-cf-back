@@ -9,6 +9,7 @@ class RetrieveMessageInChatSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     text = serializers.CharField()
     author = RetrieveUserSerializer(read_only=True, source='author.user')
+    created = serializers.DateTimeField()
 
 
 class RetrieveChatSerializer(serializers.Serializer):

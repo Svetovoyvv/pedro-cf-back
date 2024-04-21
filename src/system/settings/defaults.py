@@ -188,3 +188,9 @@ SIMPLE_JWT = {
 }
 
 FIXTURE_DIRS = ['src/fixtures']
+
+SPECTACULAR_SETTINGS = {
+    "SWAGGER_UI_SETTINGS": {
+
+    }
+}
